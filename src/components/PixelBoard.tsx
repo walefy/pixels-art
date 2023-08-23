@@ -26,7 +26,6 @@ function PixelBoard() {
 const DivPixelBoard = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 40px);
-  margin: auto auto;
 `;
 
 export default PixelBoard;

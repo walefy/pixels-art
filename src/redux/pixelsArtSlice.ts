@@ -29,9 +29,11 @@ const generatePalette = () => {
   return newPalette;
 };
 
+const palette = generatePalette();
+
 const INITIAL_STATE: RootState = {
-  selectedColor: 'rgb(255, 255, 255)',
-  palette: generatePalette(),
+  selectedColor: palette[0],
+  palette,
   board: generateBoard(),
 };
 
@@ -50,6 +52,7 @@ const pixelArtSlice = createSlice({
     regeneratePalette: (state) => {
       const newPalette = new Array(4).fill(null).map(generateRgbColor);
       state.palette = newPalette;
+      state.selectedColor = newPalette[0];
       setItemFromLocalStorage<string[]>(LOCAL_STORAGE_PALETTE_KEY, newPalette);
     },
   }
