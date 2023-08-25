@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { RootState } from '../types';
-import { changePixelColor } from '../redux/pixelsArtSlice';
+import { changePixelColor, changeSelectedColor } from '../redux/pixelsArtSlice';
 
 type PixelProps = {
   initialColor: string;
@@ -11,17 +11,40 @@ type PixelProps = {
 
 function Pixel({ initialColor, id }: PixelProps) {
   const selectedColor = useSelector((state: RootState) => state.selectedColor);
+  const mouseTool = useSelector((state: RootState) => state.mouseTool);
   const [color, setColor] = useState(initialColor);
 
   const dispatch = useDispatch();
 
-  const handleClickPixel = useCallback(() => {
-    setColor(selectedColor);
-    dispatch(changePixelColor({ id, color: selectedColor }));
-  }, [selectedColor]);
+  const handlePixel = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+
+    if (mouseTool === 'eraser' && event.buttons === 1) {
+      setColor('white');
+      dispatch(changePixelColor({ id, color: 'white' }));
+      return;
+    }
+
+    if (mouseTool === 'color-picker' && event.buttons === 1) {
+      dispatch(changeSelectedColor(color));
+      return;
+    }
+
+    if(mouseTool === 'pen' && event.buttons === 1) {
+      setColor(selectedColor);
+      dispatch(changePixelColor({ id, color: selectedColor }));
+    }
+  }, [mouseTool, selectedColor, color, id]);
 
   return (
-    <DivPixel color={ color } onClick={ handleClickPixel } />
+    <DivPixel
+      color={ color }
+      onMouseDown={ handlePixel }
+      onMouseEnter={ handlePixel }
+      onDragStart={ handlePixel }
+      onDragEnd={ handlePixel }
+      draggable={ false }
+    />
   );
 }
 

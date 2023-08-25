@@ -3,13 +3,18 @@ import { nanoid } from 'nanoid';
 import Pixel from './Pixel';
 import { useSelector } from 'react-redux';
 import { RootState } from '../types';
+import { nearestPerfectSquare } from '../utils/nearestPerfectSquare';
+
+type DivPixelBoardProps = {
+  $sizeRepeat: number;
+};
 
 function PixelBoard() {
-  // rewrite
   const board = useSelector((state: RootState) => state.board);
+  const boardSize = Math.sqrt(nearestPerfectSquare(board.length));
 
   return (
-    <DivPixelBoard>
+    <DivPixelBoard  $sizeRepeat={ boardSize }>
       {
         board.map((pixel) => (
           <Pixel
@@ -23,9 +28,9 @@ function PixelBoard() {
   );
 }
 
-const DivPixelBoard = styled.div`
+const DivPixelBoard = styled.div<DivPixelBoardProps>`
   display: grid;
-  grid-template-columns: repeat(4, 40px);
+  grid-template-columns: repeat(${(props) => props.$sizeRepeat}, 1fr);
 `;
 
 export default PixelBoard;

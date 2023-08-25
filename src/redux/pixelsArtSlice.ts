@@ -2,9 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 import { PixelType, RootState } from '../types';
 import { nanoid } from 'nanoid';
 import { getItemFromLocalStorage, setItemFromLocalStorage } from '../utils/localStoreUtils';
+import { nearestPerfectSquare } from '../utils/nearestPerfectSquare';
 
 const LOCAL_STORAGE_BOARD_KEY = 'board';
 const LOCAL_STORAGE_PALETTE_KEY = 'palette';
+const LOCAL_STORAGE_COLORS_HISTORY_KEY = 'colorsHistory';
 
 const generateRgbColor = () => {
   const red = Math.floor(Math.random() * 255);
@@ -13,28 +15,37 @@ const generateRgbColor = () => {
   return `rgb(${red}, ${green}, ${blue})`;
 };
 
-const generateBoard = () => {
-  const localStorageBoard = getItemFromLocalStorage(LOCAL_STORAGE_BOARD_KEY);
+const generateInitialBoard = () => {
+  const localStorageBoard = getItemFromLocalStorage<PixelType[]>(LOCAL_STORAGE_BOARD_KEY);
   if (localStorageBoard) return localStorageBoard;
   const newBoard = new Array(16).fill(null).map(() => ({ id: nanoid(), color: 'rgb(255, 255, 255)' }));
   setItemFromLocalStorage<PixelType[]>(LOCAL_STORAGE_BOARD_KEY, newBoard);
   return newBoard;
 };
 
-const generatePalette = () => {
-  const localStoragePalette = getItemFromLocalStorage(LOCAL_STORAGE_PALETTE_KEY);
+const generateInitialPalette = () => {
+  const localStoragePalette = getItemFromLocalStorage<string[]>(LOCAL_STORAGE_PALETTE_KEY);
   if (localStoragePalette) return localStoragePalette;
   const newPalette = new Array(4).fill(null).map(generateRgbColor);
   setItemFromLocalStorage<string[]>(LOCAL_STORAGE_PALETTE_KEY, newPalette);
   return newPalette;
 };
 
-const palette = generatePalette();
+const generateInitialColorsHistory = () => {
+  const localStorageColorsHistory = getItemFromLocalStorage<string[]>(LOCAL_STORAGE_COLORS_HISTORY_KEY);
+  if (localStorageColorsHistory) return localStorageColorsHistory;
+  setItemFromLocalStorage<string[]>(LOCAL_STORAGE_COLORS_HISTORY_KEY, []);
+  return [];
+};
+
+const palette = generateInitialPalette();
 
 const INITIAL_STATE: RootState = {
   selectedColor: palette[0],
   palette,
-  board: generateBoard(),
+  mouseTool: 'pen',
+  board: generateInitialBoard(),
+  colorsHistory: generateInitialColorsHistory(),
 };
 
 const pixelArtSlice = createSlice({
@@ -55,8 +66,35 @@ const pixelArtSlice = createSlice({
       state.selectedColor = newPalette[0];
       setItemFromLocalStorage<string[]>(LOCAL_STORAGE_PALETTE_KEY, newPalette);
     },
+    changeBoardSize: (state, action) => {
+      const newBoard = new Array(nearestPerfectSquare(action.payload))
+        .fill(null).map(() => ({ id: nanoid(), color: 'rgb(255, 255, 255)' }));
+      state.board = newBoard;
+      setItemFromLocalStorage<PixelType[]>(LOCAL_STORAGE_BOARD_KEY, newBoard);
+    },
+    addPaletteInHistory: (state) => {
+      const colorsHistory = getItemFromLocalStorage<string[]>(LOCAL_STORAGE_COLORS_HISTORY_KEY);
+      if (colorsHistory) {
+        const newColorsHistory = [...colorsHistory, ...state.palette];
+        setItemFromLocalStorage<string[]>(LOCAL_STORAGE_COLORS_HISTORY_KEY, newColorsHistory);
+        state.colorsHistory = newColorsHistory;
+      } else {
+        setItemFromLocalStorage<string[]>(LOCAL_STORAGE_COLORS_HISTORY_KEY, [...state.palette]);
+        state.colorsHistory = [...state.palette];
+      }
+    },
+    changeMouseTool: (state, action) => {
+      state.mouseTool = action.payload;
+    },
   }
 });
 
-export const { changeSelectedColor, changePixelColor, regeneratePalette } = pixelArtSlice.actions;
+export const {
+  changeSelectedColor,
+  changePixelColor,
+  regeneratePalette,
+  changeBoardSize,
+  addPaletteInHistory,
+  changeMouseTool,
+} = pixelArtSlice.actions;
 export default pixelArtSlice.reducer;

@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from 'styled-components';
-import { changeSelectedColor, regeneratePalette } from '../redux/pixelsArtSlice';
+import { changeSelectedColor, regeneratePalette, addPaletteInHistory } from '../redux/pixelsArtSlice';
 import { RootState } from '../types';
 import { ArrowsClockwise } from '@phosphor-icons/react';
+import { useCallback } from 'react';
 
 type DivPaletteProps =  {
   $color: string;
@@ -14,6 +15,11 @@ function Palette() {
   const selectedColor = useSelector((state: RootState) => state.selectedColor);
 
   const dispatch = useDispatch();
+
+  const handleClickRegenerate = useCallback(() => {
+    dispatch(regeneratePalette());
+    dispatch(addPaletteInHistory());
+  }, []);
 
   return (
     <PaletteContainer>
@@ -28,7 +34,7 @@ function Palette() {
           </DivPalette>
         ))
       }
-      <RegenerateButton onClick={() => dispatch(regeneratePalette())}>
+      <RegenerateButton onClick={ handleClickRegenerate }>
         <ArrowsClockwise size={32} />
       </RegenerateButton>
     </PaletteContainer>

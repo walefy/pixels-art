@@ -7,4 +7,6 @@ export type RootState = {
   selectedColor: string;
   palette: string[];
   board: PixelType[];
+  colorsHistory: string[];
+  mouseTool: 'pen' | 'color-picker' | 'eraser';
 };

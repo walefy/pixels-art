@@ -1,12 +1,15 @@
+import InputBoardSize from './components/InputBoardSize';
 import Palette from './components/Palette';
+import PaletteHistory from './components/PaletteHistory';
 import PixelBoard from './components/PixelBoard';
 import { styled } from 'styled-components';
+import Tools from './components/Tools';
 
 function App() {
   return (
     <AppContainer>
       <Aside>
-        <TestDiv />
+        <Tools />
       </Aside>
       <TopOrBottom>
         <Palette />
@@ -15,10 +18,10 @@ function App() {
         <PixelBoard />
       </Main>
       <Aside>
-        <TestDiv />
+        <PaletteHistory />  
       </Aside>
       <TopOrBottom>
-        <TestDiv />
+        <InputBoardSize />
       </TopOrBottom>
     </AppContainer>
   );
@@ -48,12 +51,6 @@ const Main = styled.main`
 
 const TopOrBottom = styled.div`
   grid-column: 2 / 3;
-`;
-
-const TestDiv = styled.div`
-  background-color: red;
-  height: 100%;
-  width: 100%;
 `;
 
 export default App;
