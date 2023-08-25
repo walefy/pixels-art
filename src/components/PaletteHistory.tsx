@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../types';
 import { styled } from 'styled-components';
-import { changeSelectedColor } from '../redux/pixelsArtSlice';
+import { changeMouseTool, changeSelectedColor } from '../redux/pixelsArtSlice';
+import { useCallback } from 'react';
 
 type ColorDivProps = {
   $bgColor: string;
@@ -13,6 +14,11 @@ function PaletteHistory() {
   const selectedColor = useSelector((state: RootState) => state.selectedColor);
   const dispatch = useDispatch();
 
+  const handleClickColor = useCallback((color: string) => {
+    dispatch(changeSelectedColor(color));
+    dispatch(changeMouseTool('pen'));
+  }, []);
+
   return (
     <ColorContainer>
       {
@@ -20,7 +26,7 @@ function PaletteHistory() {
           <ColorDiv
             key={ index }
             $bgColor={ color }
-            onClick={() => dispatch(changeSelectedColor(color))}
+            onClick={() => handleClickColor(color) }
             $selectedColor={ selectedColor }
           />
         ))

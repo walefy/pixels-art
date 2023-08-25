@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from 'styled-components';
-import { changeSelectedColor, regeneratePalette, addPaletteInHistory } from '../redux/pixelsArtSlice';
+import { changeSelectedColor, regeneratePalette, addPaletteInHistory, changeMouseTool } from '../redux/pixelsArtSlice';
 import { RootState } from '../types';
 import { ArrowsClockwise } from '@phosphor-icons/react';
 import { useCallback } from 'react';
@@ -21,6 +21,11 @@ function Palette() {
     dispatch(regeneratePalette());
   }, []);
 
+  const handleClickPalette = useCallback((color: string) => {
+    dispatch(changeSelectedColor(color));
+    dispatch(changeMouseTool('pen'));
+  }, []);
+
   return (
     <PaletteContainer>
       {
@@ -29,7 +34,7 @@ function Palette() {
             key={ color }
             $color={ color }
             $selectedColor={ selectedColor }
-            onClick={() => dispatch(changeSelectedColor(color))}
+            onClick={ () => handleClickPalette(color) }
           >
           </DivPalette>
         ))
