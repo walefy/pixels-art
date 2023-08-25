@@ -17,8 +17,8 @@ function Palette() {
   const dispatch = useDispatch();
 
   const handleClickRegenerate = useCallback(() => {
-    dispatch(regeneratePalette());
     dispatch(addPaletteInHistory());
+    dispatch(regeneratePalette());
   }, []);
 
   return (
