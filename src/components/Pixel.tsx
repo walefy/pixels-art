@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { RootState } from '../types';
-import { changePixelColor, changeSelectedColor } from '../redux/pixelsArtSlice';
+import { changeMouseTool, changePixelColor, changeSelectedColor } from '../redux/pixelsArtSlice';
 
 type PixelProps = {
   initialColor: string;
@@ -27,6 +27,8 @@ function Pixel({ initialColor, id }: PixelProps) {
 
     if (mouseTool === 'color-picker' && event.buttons === 1) {
       dispatch(changeSelectedColor(color));
+      dispatch(changeMouseTool('pen'));
+      console.log(mouseTool);
       return;
     }
 
